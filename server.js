@@ -48,7 +48,7 @@ app.post('/people/:person/addPhoto', function (req, res, next) {
         JSON.stringify(peopleData, null, 2),
         function (err) {
           if (!err) {
-            res.status(200).send()
+            res.status(200).send("Success!!!")
           } else {
             res.status(500).send("Error: error saving photo card")
           }

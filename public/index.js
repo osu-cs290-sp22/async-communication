@@ -21,13 +21,34 @@ function handleModalAcceptClick() {
     alert("You must fill in all of the fields!")
   } else {
 
-    var photoCardTemplate = Handlebars.templates.photoCard
-    var newPhotoCardHTML = photoCardTemplate({
-      url: photoURL,
-      caption: caption
+    var reqUrl = "/people/" + getPersonIdFromURL() + "/addPhoto"
+    fetch(reqUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        url: photoURL,
+        caption: caption
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(function (res) {
+      if (res.status === 200) {
+        var photoCardTemplate = Handlebars.templates.photoCard
+        var newPhotoCardHTML = photoCardTemplate({
+          url: photoURL,
+          caption: caption
+        })
+        var photoCardContainer = document.querySelector('.photo-card-container')
+        photoCardContainer.insertAdjacentHTML('beforeend', newPhotoCardHTML)
+        return res.text()
+      } else {
+        alert("An error occurred saving your photo card")
+      }
+    }).then(function (body) {
+      console.log("== response body:", body)
+    }).catch(function (err) {
+      alert("An error occurred saving your photo card from catch() clause")
     })
-    var photoCardContainer = document.querySelector('.photo-card-container')
-    photoCardContainer.insertAdjacentHTML('beforeend', newPhotoCardHTML)
 
     hideModal()
 
@@ -50,7 +71,7 @@ function showModal() {
 function clearModalInputs() {
 
   var modalInputElements = document.querySelectorAll('#add-photo-modal input')
-  for (var i = 0 i < modalInputElements.length i++) {
+  for (var i = 0; i < modalInputElements.length; i++) {
     modalInputElements[i].value = ''
   }
 
@@ -82,7 +103,7 @@ window.addEventListener('DOMContentLoaded', function () {
   modalAcceptButton.addEventListener('click', handleModalAcceptClick)
 
   var modalHideButtons = document.getElementsByClassName('modal-hide-button')
-  for (var i = 0 i < modalHideButtons.length i++) {
+  for (var i = 0; i < modalHideButtons.length; i++) {
     modalHideButtons[i].addEventListener('click', hideModal)
   }
 
